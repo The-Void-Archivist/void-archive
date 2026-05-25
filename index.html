@@ -247,43 +247,89 @@
     .book {
       display: flex; align-items: center; justify-content: center;
       position: relative;
-      opacity: 0.12;
+      opacity: 0.13;
       transition: opacity 1.4s ease, filter 0.3s ease;
       cursor: default;
-      border-right: 1px solid rgba(35,35,35,0.5);
+      overflow: hidden;
     }
-    .book-shelf.right .book { border-right: none; border-left: 1px solid rgba(35,35,35,0.5); }
 
     .book.revealed { pointer-events: all; cursor: pointer; }
-    .book.revealed:hover { filter: brightness(2.4); opacity: 0.65; }
+    .book.revealed:hover { filter: brightness(1.8) sepia(0.2); opacity: 0.7; }
     .book.revealed:hover .book-title { opacity: 1; }
-    .book-main.revealed { opacity: 0.35; }
-    .book-main.revealed:hover { opacity: 0.85; }
+    .book-main.revealed { opacity: 0.3; }
+    .book-main.revealed:hover { opacity: 0.75; }
+
+    /* Spine inner structure */
+    .book::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: repeating-linear-gradient(
+        to bottom,
+        transparent 0px,
+        transparent 18px,
+        rgba(0,0,0,0.35) 18px,
+        rgba(0,0,0,0.35) 20px
+      );
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* Edge highlight */
+    .book::after {
+      content: '';
+      position: absolute; top: 0; left: 0; bottom: 0; width: 2px;
+      background: linear-gradient(to right, rgba(80,70,55,0.3), transparent);
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .book-shelf.right .book::after {
+      left: auto; right: 0;
+      background: linear-gradient(to left, rgba(80,70,55,0.3), transparent);
+    }
 
     .book-title {
       writing-mode: vertical-rl; text-orientation: mixed;
       transform: rotate(180deg);
-      font-family: var(--serif); font-size: 13px; letter-spacing: 0.22em;
-      color: var(--text-dim); opacity: 0;
-      transition: opacity 0.4s; user-select: none; white-space: nowrap; padding: 10px 0;
+      font-family: var(--serif); font-size: 12px; letter-spacing: 0.28em;
+      color: rgba(180,160,120,0.85); opacity: 0;
+      transition: opacity 0.4s; user-select: none; white-space: nowrap;
+      padding: 10px 0; position: relative; z-index: 3;
+      text-shadow: 0 0 8px rgba(160,130,80,0.4);
     }
     .book-shelf.right .book-title { transform: rotate(0deg); }
 
-    /* Individual book widths and shades (width = spine thickness, height = full column) */
-    .b1 { width: 20px; background: #111; }
-    .b2 { width: 14px; background: #0e0e0e; }
-    .b3 { width: 26px; background: #131313; }
-    .b4 { width: 16px; background: #0f0f0f; }
-    .b-main { width: 34px; background: #181818; border-top: 1px solid #252525; border-bottom: 1px solid #252525; }
-    .b5 { width: 18px; background: #101010; }
-    .b6 { width: 12px; background: #0d0d0d; }
-    .b7 { width: 24px; background: #121212; }
-    .b8 { width: 16px; background: #0e0e0e; }
-
-    /* Shelf line — now vertical, on inner edge */
-    .shelf-line {
-      display: none;
+    /* Decorative rib bands on main books */
+    .book-main .rib {
+      position: absolute; left: 0; right: 0; height: 5px;
+      background: linear-gradient(to bottom,
+        rgba(70,60,40,0.6) 0%,
+        rgba(50,42,28,0.8) 40%,
+        rgba(70,60,40,0.6) 100%
+      );
+      z-index: 2;
     }
+    .book-main .rib::before, .book-main .rib::after {
+      content: '';
+      position: absolute; left: 1px; right: 1px; height: 1px;
+      background: rgba(100,85,55,0.5);
+    }
+    .book-main .rib::before { top: 0; }
+    .book-main .rib::after  { bottom: 0; }
+
+    /* Book sizes and leather colors */
+    .b1  { width: 20px; background: linear-gradient(to right, #0e0b08, #141009, #0e0b08); }
+    .b2  { width: 14px; background: linear-gradient(to right, #0a0908, #100d0a, #0a0908); }
+    .b3  { width: 28px; background: linear-gradient(to right, #100c08, #18120c, #100c08); }
+    .b4  { width: 16px; background: linear-gradient(to right, #0c0a07, #12100a, #0c0a07); }
+    .b-main { width: 38px; background: linear-gradient(to right, #151009, #201810, #181208, #201810, #151009); }
+    .b5  { width: 18px; background: linear-gradient(to right, #0d0b08, #130f0a, #0d0b08); }
+    .b6  { width: 12px; background: linear-gradient(to right, #090808, #0e0c09, #090808); }
+    .b7  { width: 26px; background: linear-gradient(to right, #0f0c08, #16110c, #0f0c08); }
+    .b8  { width: 16px; background: linear-gradient(to right, #0b0908, #110e0a, #0b0908); }
+
+    /* Shelf line */
+    .shelf-line { display: none; }
 
     /* Corner coords */
     .index-corner {
@@ -413,14 +459,22 @@
       <div class="book b3"><div class="book-title"></div></div>
       <div class="book b4"><div class="book-title"></div></div>
       <div class="book b-main book-main" id="book-verites">
-        <div class="book-title">Vérités</div>
+        <div class="rib" style="top:12%"></div>
+        <div class="rib" style="top:22%"></div>
+        <div class="rib" style="bottom:22%"></div>
+        <div class="rib" style="bottom:12%"></div>
+        <div class="book-title">TRUTHS</div>
       </div>
     </div>
 
     <!-- RIGHT SHELF — Mensonges -->
     <div class="book-shelf right">
       <div class="book b-main book-main" id="book-mensonges">
-        <div class="book-title">Mensonges</div>
+        <div class="rib" style="top:12%"></div>
+        <div class="rib" style="top:22%"></div>
+        <div class="rib" style="bottom:22%"></div>
+        <div class="rib" style="bottom:12%"></div>
+        <div class="book-title">LIES</div>
       </div>
       <div class="book b5"><div class="book-title"></div></div>
       <div class="book b6"><div class="book-title"></div></div>
@@ -642,6 +696,31 @@
       charIndex++;
     }, 22);
   }
+
+  function skipText() {
+    if (typeInterval) clearInterval(typeInterval);
+    // Clear current content and write everything at once
+    textEl.innerHTML = '';
+    fullText.split('\n').forEach((line, i, arr) => {
+      textEl.appendChild(document.createTextNode(line));
+      if (i < arr.length - 1) {
+        textEl.appendChild(document.createElement('br'));
+        textEl.appendChild(document.createElement('br'));
+      }
+    });
+    charIndex = fullText.length;
+    showBooks();
+  }
+
+  // Double space to skip
+  let lastSpace = 0;
+  window.addEventListener('keydown', e => {
+    if (e.code === 'Space' && document.getElementById('index-page').classList.contains('open')) {
+      const now = Date.now();
+      if (now - lastSpace < 400) skipText();
+      lastSpace = now;
+    }
+  });
 
   function showBooks() {
     document.getElementById('shelf-line').classList.add('show');
